@@ -1,0 +1,129 @@
+CREATE TABLE Ds_coin (
+    coin_id INTEGER PRIMARY KEY,  -- Identificador único da moeda
+    coin_name TEXT NOT NULL       -- Nome da moeda
+);
+
+CREATE TABLE tickey (
+    coin_id INTEGER NOT NULL,      -- Moeda relacionada
+    date_hour TEXT NOT NULL,       -- Data e hora no formato "YYYY-MM-DD HH:MM:SS"
+    price INTEGER NOT NULL,        
+    volume INTEGER NOT NULL,       
+    market_camp INTEGER NOT NULL,  
+    PRIMARY KEY (coin_id, date_hour),  -- Chave primária composta
+    FOREIGN KEY (coin_id) REFERENCES Ds_coin(coin_id) ON DELETE CASCADE
+);
+
+CREATE TABLE viewer (
+    date TEXT NOT NULL,            -- Apenas a data no formato "YYYY-MM-DD"
+    coin_id INTEGER NOT NULL,       -- Moeda relacionada
+    open INTEGER NOT NULL,          
+    closse INTEGER NOT NULL,        
+    max INTEGER NOT NULL,           
+    lower FLOAT NOT NULL,           
+    PRIMARY KEY (date, coin_id),  -- Chave primária composta
+    FOREIGN KEY (coin_id) REFERENCES Ds_coin(coin_id) ON DELETE CASCADE
+);
+
+
+precisso criar um escript para ler esse csv 
+
+coin,Date,Price,Market Cap,Volume
+bitcoin,2024-03-01 03:00:09,60924.702970892286,1195878939487.2205,64230096120.93902
+bitcoin,2024-03-01 04:00:43,61162.43461561184,1200798614154.3909,63538094950.53823
+bitcoin,2024-03-01 05:00:51,61488.640229402146,1207727159429.315,62659945978.8885
+bitcoin,2024-03-01 06:00:22,61333.43230766569,1206873864299.2454,61510411374.147064
+bitcoin,2024-03-01 07:01:12,61542.78597549285,1210044659716.7278,49646647800.11199
+bitcoin,2024-03-01 08:01:08,61479.23728988253,1209017174728.2068,57479109454.67726
+bitcoin,2024-03-01 09:01:14,61923.57468203881,1220993867563.5547,56377066777.59654
+bitcoin,2024-03-01 10:00:31,62196.55098258529,1221298079997.99,56329837660.48505
+bitcoin,2024-03-01 11:00:51,62059.25963582293,1217581321482.057,55863224157.82006
+bitcoin,2024-03-01 12:00:58,61906.519119786026,1217244399752.081,54938245595.15223
+bitcoin,2024-03-01 13:00:34,62230.09782049514,1227876942745.71,54445388107.8368
+........................................ continua com outras moedas e datas
+
+e inserir nesse banco 
+import sqlite3
+
+# Conectar ao banco de dados
+conector = sqlite3.connect(r'C:\Users\migue\Documents\cryptodb2\format\crypto3.db')
+cursor = conector.cursor()
+
+
+
+cursor.execute("""
+    CREATE TABLE Ds_coin (
+    coin_id INTEGER PRIMARY KEY,  
+    coin_name TEXT NOT NULL
+    )
+""")
+
+cursor.execute("""
+    CREATE TABLE tickey (
+    coin_id INTEGER NOT NULL,      
+    date_hour TEXT NOT NULL,       
+    price INTEGER NOT NULL,        
+    volume INTEGER NOT NULL,       
+    market_camp INTEGER NOT NULL,  
+    PRIMARY KEY (coin_id, date_hour),  
+    FOREIGN KEY (coin_id) REFERENCES Ds_coin(coin_id) ON DELETE CASCADE
+    )
+""")
+
+cursor.execute("""
+    CREATE TABLE viewer (
+    date TEXT NOT NULL,            
+    coin_id INTEGER NOT NULL,       
+    open INTEGER NOT NULL,          
+    closse INTEGER NOT NULL,        
+    max INTEGER NOT NULL,           
+    lower FLOAT NOT NULL,           
+    PRIMARY KEY (date, coin_id),  
+    FOREIGN KEY (coin_id) REFERENCES Ds_coin(coin_id) ON DELETE CASCADE
+    );
+""")
+
+conector.commit()
+cursor.close()
+conector.close()
+
+mas deve manipular os dados do csv usando essas minhas funções (essas funções formatan os dados para inserir no banco )
+from datetime import datetime
+import csv
+import sqlite3 
+
+table_csv =(r'C:\Users\migue\Documents\cryptodb2\coinsfavornaoderproblema.csv')
+
+# Conectar ao banco de dados
+conector = sqlite3.connect(r'C:\Users\migue\Documents\cryptodb2\format\crypto3.db')
+cursor = conector.cursor()
+
+day_coins = []
+
+def ajustar_hora(data_str):
+    dt = datetime.strptime(data_str, "%Y-%m-%d %H:%M:%S")
+    dt_ajustado = dt.replace(minute=0, second=0)
+    return dt_ajustado.strftime("%Y-%m-%d %H:%M:%S")
+
+def lista_calculos(coin, date):
+    while coin == coin_selec and date == date_selec:
+        day_coins.append(coin.price)
+        #criar uma forma de apagar esses dados depois da lista ser usada
+
+# tira a hora da string
+def extrair_data(data_str):
+    return data_str.split(" ")[0]
+
+def max(day_coins):
+    return max(day_coins)
+
+def lower(day_coins):
+    return lower(day_coins)
+
+def open(day_coins, date,):
+    return day_coins[0]
+
+def closse(day_coins, date):
+    return day_coins.pop()
+
+
+
